@@ -39,9 +39,36 @@ TNGraphEdgeI.GetId = GetId
 //%template(MxWccSz_PNGraph) TSnap::GetMxWccSz<PNGraph>;
 // End Basic Directed Graphs
 
+
 // Basic PNGraphs
 %template(PNGraph) TPt< TNGraph >;
 
+%extend TPt<TNGraph>{
+%pythoncode {
+    def __reduce__(self):
+        import os, tempfile
+        tmpfile = tempfile.mkstemp()
+        FOut = TFOut(tmpfile[1])
+        self.Save(FOut)
+        FOut.Flush()
+        data = open(tmpfile[1],'rb').read()
+#        os.remove(tmpfile[1])
+        return unreducePNGraph, (data,)
+      }
+ }
+
+%pythoncode {
+def unreducePNGraph(data):
+    import os, tempfile
+    tmpfile = tempfile.mkstemp()
+    with open(tmpfile[1],"wb") as temp:
+        temp.write(data)
+    SIn = TFIn(tmpfile[1])
+    new_graph = PNGraph.New()
+    new_graph.Load(SIn)
+ #   os.remove(tmpfile[1])
+    return new_graph
+ }
 // gbase.h - PNGraph
 %template(PrintInfo_PNGraph) TSnap::PrintInfo<PNGraph>;
 
