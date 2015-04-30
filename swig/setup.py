@@ -138,8 +138,7 @@ sys_install = os.path.join(
             "site-packages")
 
 instdir = "site-packages"
-if swubuntu:
-    instdir = "dist-packages"
+
 
 # check for an alternative Python user directory
 user_install = sys_install
