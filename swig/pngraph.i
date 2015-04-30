@@ -48,11 +48,10 @@ TNGraphEdgeI.GetId = GetId
     def __reduce__(self):
         import os, tempfile
         tmpfile = tempfile.mkstemp()
-        FOut = TFOut(tmpfile[1])
-        self.Save(FOut)
-        FOut.Flush()
+        SaveEdgeList(self,tmpfile[1])
         data = open(tmpfile[1],'rb').read()
-#        os.remove(tmpfile[1])
+        os.close(tmpfile[0])
+        os.remove(tmpfile[1])
         return unreducePNGraph, (data,)
       }
  }
@@ -63,10 +62,9 @@ def unreducePNGraph(data):
     tmpfile = tempfile.mkstemp()
     with open(tmpfile[1],"wb") as temp:
         temp.write(data)
-    SIn = TFIn(tmpfile[1])
-    new_graph = PNGraph.New()
-    new_graph.Load(SIn)
- #   os.remove(tmpfile[1])
+    new_graph = LoadEdgeList(PNGraph,tmpfile[1])
+    os.close(tmpfile[0])
+    os.remove(tmpfile[1])
     return new_graph
  }
 // gbase.h - PNGraph
